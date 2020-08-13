@@ -19,8 +19,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::post('/registration', 'ApplicanController@registration')->name('registration');
+
+Route::get('/activated', 'HomeController@activated')->name('activated');
+Route::get('/activate', 'HomeController@activation')->name('activation');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/sendemail', 'SendEmailController@index')->name('sendmail');
-Route::get('/store', 'SendEmailController@store')->name('email-activator');
+Route::get('/store/{user}', 'SendEmailController@store')->name('activator')->middleware('signed');;
 Route::get('/applicants', 'ApplicanController@index')->name('applicants');
 Route::get('/employ/{id}', 'ApplicanController@create')->name('employ');

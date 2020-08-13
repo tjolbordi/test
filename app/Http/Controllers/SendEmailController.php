@@ -40,14 +40,9 @@ class SendEmailController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store($id)
     {
-        
-        User::whereId(auth()->user()->id)->update([
-            'activation_id'  => 1,
-        ]);
-
-        return redirect('/home');
+        return view('activated', compact('id'));
     }
 
     /**

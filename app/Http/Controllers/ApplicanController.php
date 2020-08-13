@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\EmployedType;
+use App\Mail\TestEmail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class ApplicanController extends Controller
 {
@@ -34,6 +38,35 @@ class ApplicanController extends Controller
         return redirect('applicants');
     }
 
+    public function registration(Request $request){
+    
+        $this->validate($request, [
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|string|email|max:255|unique:users',
+            'last_name'     => 'required|string|max:255',
+            'phone_number'  => 'string|regex:/^([0-9\s\-\+\(\)]*)$/|unique:users',
+        ]);
+
+        $employedTypeId = EmployedType::where('title', '=', 'unemployed')->first();
+
+        User::create([
+            'name'              => $request->name,
+            'last_name'         => $request->last_name,
+            'email'             => $request->email,
+            'phone_number'      => $request->phone_number,
+            'employed_type_id'  => $employedTypeId->id,
+        ]);
+
+        $user = User::where('email', '=', $request->email)->first();
+
+        $generatedUrl = URL::temporarySignedRoute(
+            'activator', now()->addMinutes(120), ['user' => $user->id]
+        );
+
+        Mail::to($request->email)->send(new TestEmail($generatedUrl));
+
+        return view('activate');
+    }
     /**
      * Store a newly created resource in storage.
      *

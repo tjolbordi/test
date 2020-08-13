@@ -25,4 +25,12 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function activation(){
+        return view('activate');
+    }
+
+    public function activated(){
+        return view('activated');
+    }
 }

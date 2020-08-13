@@ -10,15 +10,16 @@ use Illuminate\Queue\SerializesModels;
 class TestEmail extends Mailable
 {
     use Queueable, SerializesModels;
+    public $generatedUrl;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($generatedUrl)
     {
-        //
+        $this->generatedUrl = $generatedUrl;
     }
 
     /**
@@ -28,6 +29,6 @@ class TestEmail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.testmail');
+        return $this->markdown('emails.testmail')->with(['generatedUrl', $this->generatedUrl]);
     }
 }

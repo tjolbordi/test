@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
         $employdId = EmployedType::where('title', '=', 'unemployed')->first();
         $seededJumberPhone = '12345';
         $user = User::where('phone_number', '=', $seededJumberPhone)->first();
+        
         if ($user === null) {
             $user = User::create([
                 'name'                           => 'jumber',
@@ -26,7 +27,7 @@ class UserSeeder extends Seeder
                 'password'                       => Hash::make('password'),
             ]);
 
-            $user->save();
+        $user->save();
         }
     }
 }

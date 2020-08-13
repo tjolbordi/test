@@ -1,9 +1,9 @@
 @component('mail::message')
-# Dear {{ Auth()->user()->name }}
+# Dear User
 
-You can activate your account by pressing button under this text
+You can verify your e-mail adress by pressing button under this text
 
-@component('mail::button', ['url' => 'http://127.0.0.1:8000/store'])
+@component('mail::button', ['url' => $generatedUrl])
 Activate
 @endcomponent
 
