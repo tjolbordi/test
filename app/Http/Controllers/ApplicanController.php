@@ -15,7 +15,7 @@ class ApplicanController extends Controller
      */
     public function index()
     {
-        $users = User::get();
+        $users = User::where('id', '!=', auth()->user()->id)->get();
         return view('applicants', compact('users'));
     }
 
@@ -27,7 +27,7 @@ class ApplicanController extends Controller
     public function create($id)
     {
         $employedTypeId = EmployedType::where('title', '=', 'employed')->first();
-        
+
         User::whereId($id)->update([
             'employed_type_id' => $employedTypeId->id,
         ]);
