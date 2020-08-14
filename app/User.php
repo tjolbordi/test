@@ -22,7 +22,8 @@ class User extends Authenticatable
         'employed_type_id', 
         'last_name', 
         'phone_number',
-        'activation_id'
+        'activation_id',
+        'role_id',
     ];
 
     /**
@@ -45,5 +46,9 @@ class User extends Authenticatable
 
     public function employed() {
         return $this->belongsTo('App\EmployedType', 'employed_type_id');
+    }
+
+    public function role() {
+        return $this->belongsTo('App\Role', 'role_id');
     }
 }

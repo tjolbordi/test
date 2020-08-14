@@ -4,7 +4,7 @@
     @if ($users->isEmpty())
         <div class="content">
             <div class="title m-b-md">
-                <h1 class="text-center font-weight-bold"> There is no any user </h1>
+                <h1 class="text-center font-weight-bold"> There is no any applicants </h1>
             </div>
         </div>
     @endif

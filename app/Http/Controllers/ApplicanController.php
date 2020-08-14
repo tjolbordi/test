@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\User;
 use App\EmployedType;
 use App\Mail\TestEmail;
+use App\Role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ApplicanController extends Controller
 {
@@ -19,7 +21,18 @@ class ApplicanController extends Controller
      */
     public function index()
     {
-        $users = User::where('id', '!=', auth()->user()->id)->get();
+        if (!auth()->check()){
+            abort(403);
+        }
+        $roleId = Role::where('title', '=', 'employed')->first();
+
+        $users = User::where('id', '!=', auth()->user()->id)
+        ->whereHas('role', function ($query) use ($roleId) {
+            $query->where('role_id', $roleId->id);
+        })
+        ->get();
+        
+
         return view('applicants', compact('users'));
     }
 
@@ -30,6 +43,10 @@ class ApplicanController extends Controller
      */
     public function create($id)
     {
+        if (!auth()->check()){
+            abort(403);
+        }
+
         $employedTypeId = EmployedType::where('title', '=', 'employed')->first();
 
         User::whereId($id)->update([
@@ -48,6 +65,7 @@ class ApplicanController extends Controller
         ]);
 
         $employedTypeId = EmployedType::where('title', '=', 'unemployed')->first();
+        $roleId = Role::where('title', '=', 'employer')->first();
 
         User::create([
             'name'              => $request->name,
@@ -55,6 +73,7 @@ class ApplicanController extends Controller
             'email'             => $request->email,
             'phone_number'      => $request->phone_number,
             'employed_type_id'  => $employedTypeId->id,
+            'role_id'           => $roleId->id,
         ]);
 
         $user = User::where('email', '=', $request->email)->first();

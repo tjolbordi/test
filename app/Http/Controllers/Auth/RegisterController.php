@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use App\User;
 use App\EmployedType;
 use App\Mail\TestEmail;
+use App\Role;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -53,11 +54,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            // 'name'          => ['required', 'string', 'max:255'],
-            // 'email'         => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password'      => ['required', 'string', 'min:8', 'max:16', 'confirmed'],
-            // 'last_name'     => ['required', 'string', 'max:255'],
-            // 'phone_number'  => ['string', 'regex:/^([0-9\s\-\+\(\)]*)$/', 'unique:users'],
         ]);
     }
 
@@ -70,6 +67,8 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $employedTypeId = EmployedType::where('title', '=', 'unemployed')->first();
+        $roleId = Role::where('title', '=', 'employer')->first();
+
         $user = User::whereId($data['user_id'])->first();
 
         $newData = [
@@ -79,16 +78,18 @@ class RegisterController extends Controller
             'email'             => $user->email,
             'password'          => Hash::make($data['password']),
         ];
-
-        User::findOrFail($data['user_id'])->delete();
         
+        User::findOrFail($data['user_id'])->delete();
+
         return User::create([
             'name'              => $newData['name'],
             'last_name'         => $newData['last_name'],
             'email'             => $newData['email'],
+            'phone_number'      => $newData['phone_number'],
             'password'          => $newData['password'],
             'activation_id'     => 1,
             'employed_type_id'  => $employedTypeId->id,
+            'role_id'           => $roleId->id,
         ]);
     }
 }
